@@ -41,6 +41,15 @@ def get_my_companies_info():
                 get_stock_info(company.strip())
         file_companies.close()
 
+
+def clear_informations():
+    del MY_COMPANIES[:]
+    del COMPANY[:]
+    del PRICE[:]
+    del CHANGE[:]
+    del PERCENTAGE_CHANGE[:]
+    del DATE[:]
+
 if __name__ == '__main__':
     get_my_companies_info()
 
