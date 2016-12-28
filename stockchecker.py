@@ -11,7 +11,6 @@ DATE = []
 
 # variable that stores what company shares you own
 MY_COMPANIES = []
-# MY_COMPANIES = ['PZU', 'PGE', 'GPW']
 
 
 def get_stock_info(company):
@@ -36,6 +35,7 @@ def get_my_companies_info():
     if os.path.isfile('companies.txt'):
         file_companies = open('companies.txt', 'r')
         for company in file_companies:
+            company = company.split(":")[0]
             if len(company.strip()) > 0:
                 MY_COMPANIES.append(company.strip())
                 get_stock_info(company.strip())
