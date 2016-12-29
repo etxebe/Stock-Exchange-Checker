@@ -1,6 +1,7 @@
 import tkinter.simpledialog
 from stockchecker import *
 from yourstock import *
+from dividends import *
 from tkinter import *
 from tkinter.ttk import *
 
@@ -12,6 +13,8 @@ class GUI:
         self.create_menu()
         self.initialize_interface_gpw()
         self.initalize_interface_profits()
+        if DIVIDEND_COMPANY:
+            self.initialize_dividends()
 
     def create_menu(self):
         menubar = Menu(self.master)
@@ -88,7 +91,32 @@ class GUI:
                 tag = ('equal',)
             else:
                 tag = ('up',)
-            self.profit_table.insert('', 'end', text=share, values=(STOCK[share][0], STOCK[share][1], PRICE[idx], STOCK_PROFITS[share][0], STOCK_PROFITS[share][1], str(difference) + ' zl'), tags=tag)
+            self.profit_table.insert('', 'end', text=share, values=(STOCK[share][0], STOCK[share][1]+' zł', PRICE[idx]+' zł', str(STOCK_PROFITS[share][0])+' zł', str(STOCK_PROFITS[share][1])+' zł', str(difference) + ' zł'), tags=tag)
+
+    def initialize_dividends(self):
+        self.dividends = Label(self.master, text="Dywidendy", font="Verdana 10 bold")
+        self.dividends.grid(row=20, column=0)
+
+        self.dividends_table = Treeview(self.master, height=6, columns=("Data dywidendy", "Stopa", "Data wyplaty", "Dywidenda", "Calkowita wartosc dywidendy"))
+        self.dividends_table.tag_configure('normal', foreground='black', font="Verdana 10 bold")
+        self.dividends_table.heading('#0', text="Nazwa")
+        self.dividends_table.heading('Data dywidendy', text="Data dywidendy")
+        self.dividends_table.heading('Stopa', text="Stopa")
+        self.dividends_table.heading('Data wyplaty', text="Data wyplaty")
+        self.dividends_table.heading('Dywidenda', text="Dywidenda")
+        self.dividends_table.heading('Calkowita wartosc dywidendy', text="Calkowita wartosc dywidendy")
+        self.dividends_table.column('#0', stretch=YES, anchor='center', width=120)
+        self.dividends_table.column('Data dywidendy', stretch=YES, anchor='center', width=100)
+        self.dividends_table.column('Stopa', stretch=YES, anchor='center', width=150)
+        self.dividends_table.column('Data wyplaty', stretch=YES, anchor='center', width=150)
+        self.dividends_table.column('Dywidenda', stretch=YES, anchor='center', width=150)
+        self.dividends_table.column('Calkowita wartosc dywidendy', stretch=YES, anchor='center', width=150)
+        self.dividends_table.grid(row=21, columnspan=3, sticky='nsew')
+
+        for share in MY_COMPANIES:
+            idx = DIVIDEND_COMPANY.index(share)
+            total_value = round(int(STOCK[share][0]) * float(DIVIDEND[idx][:4]) - round(int(STOCK[share][0]) * float(DIVIDEND[idx][:4]) * 0.19),2)
+            self.dividends_table.insert('', 'end', text=share, values=(DIVIDEND_DATE[idx], INTEREST[idx], PAY_DATE[idx], DIVIDEND[idx], str(total_value)+' zł'), tags=('normal',))
 
     def add_new_company(self):
         AddCompanyDialog(self.master)
@@ -158,4 +186,5 @@ if __name__ == '__main__':
     get_my_companies_info()
     fill_user_stock()
     calculate_interest()
+    get_dividend_for_company(MY_COMPANIES)
     main()
